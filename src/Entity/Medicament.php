@@ -78,12 +78,13 @@ class Medicament
         return $this->photo;
     }
 
-    public function setPhoto(string $photo): static
+    public function setPhoto(?string $photo): self
     {
         $this->photo = $photo;
 
         return $this;
     }
+    
 
     public function getQteStock(): ?int
     {

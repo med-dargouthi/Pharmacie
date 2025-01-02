@@ -1,50 +1,27 @@
 <?php
+// src/Entity/LigneMedicament.php
 
 namespace App\Entity;
 
-use App\Repository\LigneMedicamentRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: LigneMedicamentRepository::class)]
+#[ORM\Entity]
 class LigneMedicament
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(type: 'integer')]
+    private $id;
 
-    #[ORM\Column]
-    private ?int $quantite = null;
+    #[ORM\Column(type: 'integer')]
+    private $quantite;
 
-    #[ORM\Column]
-    private ?int $numLigne = null;
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private $numLigne;
 
-    /**
-     * @var Collection<int, Medicament>
-     */
-    #[ORM\ManyToMany(targetEntity: Medicament::class, inversedBy: 'ligneMedicaments')]
-    private Collection $idMedicament;
-
-    /**
-     * @var Collection<int, Ordonnance>
-     */
-    #[ORM\OneToMany(targetEntity: Ordonnance::class, mappedBy: 'LigneMedicament')]
-    private Collection $ordonnances;
-
-    /**
-     * @var Collection<int, Recu>
-     */
-    #[ORM\ManyToMany(targetEntity: Recu::class, mappedBy: 'LigneMed')]
-    private Collection $recus;
-
-    public function __construct()
-    {
-        $this->idMedicament = new ArrayCollection();
-        $this->ordonnances = new ArrayCollection();
-        $this->recus = new ArrayCollection();
-    }
+    #[ORM\ManyToOne(targetEntity: Medicament::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private $medicament;
 
     public function getId(): ?int
     {
@@ -56,10 +33,9 @@ class LigneMedicament
         return $this->quantite;
     }
 
-    public function setQuantite(int $quantite): static
+    public function setQuantite(int $quantite): self
     {
         $this->quantite = $quantite;
-
         return $this;
     }
 
@@ -68,91 +44,20 @@ class LigneMedicament
         return $this->numLigne;
     }
 
-    public function setNumLigne(int $numLigne): static
+    public function setNumLigne(?int $numLigne): self
     {
         $this->numLigne = $numLigne;
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, Medicament>
-     */
-    public function getIdMedicament(): Collection
+    public function getMedicament(): ?Medicament
     {
-        return $this->idMedicament;
+        return $this->medicament;
     }
 
-    public function addIdMedicament(Medicament $idMedicament): static
+    public function setMedicament(?Medicament $medicament): self
     {
-        if (!$this->idMedicament->contains($idMedicament)) {
-            $this->idMedicament->add($idMedicament);
-        }
-
-        return $this;
-    }
-
-    public function removeIdMedicament(Medicament $idMedicament): static
-    {
-        $this->idMedicament->removeElement($idMedicament);
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Ordonnance>
-     */
-    public function getOrdonnances(): Collection
-    {
-        return $this->ordonnances;
-    }
-
-    public function addOrdonnance(Ordonnance $ordonnance): static
-    {
-        if (!$this->ordonnances->contains($ordonnance)) {
-            $this->ordonnances->add($ordonnance);
-            $ordonnance->setLigneMedicament($this);
-        }
-
-        return $this;
-    }
-
-    public function removeOrdonnance(Ordonnance $ordonnance): static
-    {
-        if ($this->ordonnances->removeElement($ordonnance)) {
-            // set the owning side to null (unless already changed)
-            if ($ordonnance->getLigneMedicament() === $this) {
-                $ordonnance->setLigneMedicament(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Recu>
-     */
-    public function getRecus(): Collection
-    {
-        return $this->recus;
-    }
-
-    public function addRecu(Recu $recu): static
-    {
-        if (!$this->recus->contains($recu)) {
-            $this->recus->add($recu);
-            $recu->addLigneMed($this);
-        }
-
-        return $this;
-    }
-
-    public function removeRecu(Recu $recu): static
-    {
-        if ($this->recus->removeElement($recu)) {
-            $recu->removeLigneMed($this);
-        }
-
+        $this->medicament = $medicament;
         return $this;
     }
 }

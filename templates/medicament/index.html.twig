@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ligne Medicament List{% endblock %}
+
+{% block body %}
+    <h1>Ligne Medicament List</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Quantity</th>
+                <th>Line of Command</th>
+                <th>Medicament ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ligne in lignes %}
+                <tr>
+                    <td>{{ ligne.id }}</td>
+                    <td>{{ ligne.quantite }}</td>
+                    <td>{{ ligne.numLigne ?: 'Not assigned' }}</td>
+                    <td>{{ ligne.medicament.id }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('ligne_medicament_new') }}">Add New Ligne Medicament</a>
+{% endblock %}
