@@ -21,15 +21,15 @@ class OrdonnanceType extends AbstractType
             ])
             ->add('idClient', EntityType::class, [
                 'class' => user::class,
-'choice_label' => 'id',
+                'choice_label' => 'id',
             ])
             ->add('medecin', EntityType::class, [
                 'class' => Medecin::class,
-'choice_label' => 'id',
+                'choice_label' => 'id',
             ])
             ->add('LigneMedicament', EntityType::class, [
                 'class' => LigneMedicament::class,
-'choice_label' => 'id',
+                'choice_label' => 'id',
             ])
         ;
     }

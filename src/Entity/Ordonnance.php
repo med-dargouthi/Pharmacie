@@ -18,7 +18,7 @@ class Ordonnance
     private ?\DateTimeInterface $dateEmission = null;
 
     #[ORM\ManyToOne(inversedBy: 'ordonnances')]
-    private ?user $idClient = null;
+    private ?User $idClient = null;
 
     #[ORM\ManyToOne(inversedBy: 'idOrd')]
     private ?Medecin $medecin = null;
@@ -43,12 +43,12 @@ class Ordonnance
         return $this;
     }
 
-    public function getIdClient(): ?user
+    public function getIdClient(): ?User
     {
         return $this->idClient;
     }
 
-    public function setIdClient(?user $idClient): static
+    public function setIdClient(?User $idClient): static
     {
         $this->idClient = $idClient;
 

@@ -25,10 +25,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $email = null;
 
     /**
-     * @var list<string> The user roles
+     * @var string The user role
      */
-    #[ORM\Column]
-    private array $roles = ["ROLE_PHARMACIEN","ROLE_ADMIN"];
+    #[ORM\Column(length: 20)]
+    private string $role = 'PHARMACIEN';
 
     /**
      * @var string The hashed password
@@ -57,13 +57,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Recu::class, mappedBy: 'idClient')]
     private Collection $recus;
 
-    #[ORM\ManyToOne(inversedBy: 'idPharmacien')]
-    private ?BonDeCommande $bonDeCommande = null;
+    /**
+     * @var Collection<int, LigneBonDeCommande>
+     */
+    #[ORM\OneToMany(targetEntity: LigneBonDeCommande::class, mappedBy: 'userId')]
+    private Collection $ligneBonDeCommandes;
+
+
 
     public function __construct()
     {
         $this->ordonnances = new ArrayCollection();
         $this->recus = new ArrayCollection();
+        $this->ligneBonDeCommandes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -95,24 +101,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @see UserInterface
-     *
-     * @return list<string>
      */
     public function getRoles(): array
     {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
-
-        return array_unique($roles);
+        return [$this->role];
     }
 
-    /**
-     * @param list<string> $roles
-     */
-    public function setRoles(array $roles): static
+    public function getRole(): string
     {
-        $this->roles = $roles;
+        return $this->role;
+    }
+
+    public function setRole(string $role): static
+    {
+        $this->role = $role;
 
         return $this;
     }
@@ -237,15 +239,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getBonDeCommande(): ?BonDeCommande
+    /**
+     * @return Collection<int, LigneBonDeCommande>
+     */
+    public function getLigneBonDeCommandes(): Collection
     {
-        return $this->bonDeCommande;
+        return $this->ligneBonDeCommandes;
     }
 
-    public function setBonDeCommande(?BonDeCommande $bonDeCommande): static
+    public function addLigneBonDeCommande(LigneBonDeCommande $ligneBonDeCommande): static
     {
-        $this->bonDeCommande = $bonDeCommande;
+        if (!$this->ligneBonDeCommandes->contains($ligneBonDeCommande)) {
+            $this->ligneBonDeCommandes->add($ligneBonDeCommande);
+            $ligneBonDeCommande->setUserId($this);
+        }
 
         return $this;
     }
+
+    public function removeLigneBonDeCommande(LigneBonDeCommande $ligneBonDeCommande): static
+    {
+        if ($this->ligneBonDeCommandes->removeElement($ligneBonDeCommande)) {
+            // set the owning side to null (unless already changed)
+            if ($ligneBonDeCommande->getUserId() === $this) {
+                $ligneBonDeCommande->setUserId(null);
+            }
+        }
+
+        return $this;
+    }
+
+
 }

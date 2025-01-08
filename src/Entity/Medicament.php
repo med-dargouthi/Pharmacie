@@ -21,7 +21,7 @@ class Medicament
     #[ORM\Column]
     private ?float $prix = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private ?string $photo = null;
 
     #[ORM\Column]
