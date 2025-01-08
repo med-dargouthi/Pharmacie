@@ -21,9 +21,9 @@ class MedicamentType extends AbstractType
             ->add('nom', TextType::class)
             ->add('prix', NumberType::class)
             ->add('photo', FileType::class, [
-                'label' => 'Photo (Image file)',
                 'mapped' => false,
                 'required' => false,
+                'data_class'=>null
             ])
             ->add('qte_stock', NumberType::class)
             ->add('sur_ordonnance', CheckboxType::class, [

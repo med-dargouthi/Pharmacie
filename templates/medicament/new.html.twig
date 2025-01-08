@@ -1,8 +1,8 @@
-{# templates/medicament/new.html.twig #}
+
 
 {% extends 'base.html.twig' %}
 
-{% block title %}Add New Medicament{% endblock %}
+
 
 {% block body %}
 <div class="header bg-primary py-5">
@@ -75,9 +75,30 @@
                     </div>
 
                     {{ form_end(form) }}
+
                 </div>
+
             </div>
+
         </div>
+
     </div>
+
 </div>
+
+    <script>
+        // JavaScript to show the image preview when the user selects a new image
+        document.getElementById('custom-file').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('image-preview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';  // Show the image preview
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
 {% endblock %}

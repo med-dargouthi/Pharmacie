@@ -5,7 +5,9 @@ namespace App\Entity;
 use App\Repository\BonDeCommandeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+
 
 #[ORM\Entity(repositoryClass: BonDeCommandeRepository::class)]
 class BonDeCommande
@@ -15,25 +17,20 @@ class BonDeCommande
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?int $NumTel = null;
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $date = null;
 
-    /**
-     * @var Collection<int, user>
-     */
-    #[ORM\OneToMany(targetEntity: user::class, mappedBy: 'bonDeCommande')]
-    private Collection $idPharmacien;
+    #[ORM\Column(length: 15)]
+    private ?string $status = null;
 
-    /**
-     * @var Collection<int, LigneBonDeCommande>
-     */
-    #[ORM\OneToMany(targetEntity: LigneBonDeCommande::class, mappedBy: 'BonDeCommande')]
-    private Collection $ligneBonDeCommandes;
+    #[ORM\OneToMany(mappedBy: 'bonDeCommande', targetEntity: LigneBonDeCommande::class, orphanRemoval: true, cascade: ['persist'])]
+    private Collection $ligneCommandes;
 
     public function __construct()
     {
-        $this->idPharmacien = new ArrayCollection();
-        $this->ligneBonDeCommandes = new ArrayCollection();
+        $this->ligneCommandes = new ArrayCollection();
+        $this->date = new \DateTime('today'); // Set the date to today without time
+        $this->status = 'En attente';
     }
 
     public function getId(): ?int
@@ -41,44 +38,25 @@ class BonDeCommande
         return $this->id;
     }
 
-    public function getNumTel(): ?int
+    public function getDate(): ?\DateTimeInterface
     {
-        return $this->NumTel;
+        return $this->date;
     }
 
-    public function setNumTel(int $NumTel): static
+    public function setDate(\DateTimeInterface $date): static
     {
-        $this->NumTel = $NumTel;
-
+        $this->date = $date;
         return $this;
     }
 
-    /**
-     * @return Collection<int, user>
-     */
-    public function getIdPharmacien(): Collection
+    public function getStatus(): ?string
     {
-        return $this->idPharmacien;
+        return $this->status;
     }
 
-    public function addIdPharmacien(user $idPharmacien): static
+    public function setStatus(string $status): static
     {
-        if (!$this->idPharmacien->contains($idPharmacien)) {
-            $this->idPharmacien->add($idPharmacien);
-            $idPharmacien->setBonDeCommande($this);
-        }
-
-        return $this;
-    }
-
-    public function removeIdPharmacien(user $idPharmacien): static
-    {
-        if ($this->idPharmacien->removeElement($idPharmacien)) {
-            // set the owning side to null (unless already changed)
-            if ($idPharmacien->getBonDeCommande() === $this) {
-                $idPharmacien->setBonDeCommande(null);
-            }
-        }
+        $this->status = $status;
 
         return $this;
     }
@@ -86,27 +64,27 @@ class BonDeCommande
     /**
      * @return Collection<int, LigneBonDeCommande>
      */
-    public function getLigneBonDeCommandes(): Collection
+    public function getLigneCommandes(): Collection
     {
-        return $this->ligneBonDeCommandes;
+        return $this->ligneCommandes;
     }
 
-    public function addLigneBonDeCommande(LigneBonDeCommande $ligneBonDeCommande): static
+    public function addLigneCommande(LigneBonDeCommande $ligneCommande): static
     {
-        if (!$this->ligneBonDeCommandes->contains($ligneBonDeCommande)) {
-            $this->ligneBonDeCommandes->add($ligneBonDeCommande);
-            $ligneBonDeCommande->setBonDeCommande($this);
+        if (!$this->ligneCommandes->contains($ligneCommande)) {
+            $this->ligneCommandes->add($ligneCommande);
+            $ligneCommande->setBonDeCommande($this);
         }
 
         return $this;
     }
 
-    public function removeLigneBonDeCommande(LigneBonDeCommande $ligneBonDeCommande): static
+    public function removeLigneCommande(LigneBonDeCommande $ligneCommande): static
     {
-        if ($this->ligneBonDeCommandes->removeElement($ligneBonDeCommande)) {
-            // set the owning side to null (unless already changed)
-            if ($ligneBonDeCommande->getBonDeCommande() === $this) {
-                $ligneBonDeCommande->setBonDeCommande(null);
+        if ($this->ligneCommandes->removeElement($ligneCommande)) {
+            // Set the owning side to null (unless already changed)
+            if ($ligneCommande->getBonDeCommande() === $this) {
+                $ligneCommande->setBonDeCommande(null);
             }
         }
 

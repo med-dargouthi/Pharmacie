@@ -13,67 +13,70 @@ class LigneBonDeCommande
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $nom = null;
-
-    #[ORM\Column(length: 20)]
-    private ?string $email = null;
-
     #[ORM\Column]
-    private ?int $numTel = null;
+    private ?int $quantite = null;
 
-    #[ORM\ManyToOne(inversedBy: 'ligneBonDeCommandes')]
-    private ?BonDeCommande $BonDeCommande = null;
+    #[ORM\ManyToOne(targetEntity: Medicament::class)] // Many-to-One relationship
+    #[ORM\JoinColumn(nullable: false)] // Ensure medicament is required
+    private ?Medicament $medicament = null; // Single Medicament
+
+    #[ORM\ManyToOne(targetEntity: BonDeCommande::class, inversedBy: 'ligneCommandes')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?BonDeCommande $bonDeCommande = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'ligneBonDeCommandes')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null; // Changed from userId to user for clarity
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getNom(): ?string
+    public function getQuantite(): ?int
     {
-        return $this->nom;
+        return $this->quantite;
     }
 
-    public function setNom(string $nom): static
+    public function setQuantite(int $quantite): static
     {
-        $this->nom = $nom;
+        $this->quantite = $quantite;
 
         return $this;
     }
 
-    public function getEmail(): ?string
+    public function getMedicament(): ?Medicament
     {
-        return $this->email;
+        return $this->medicament;
     }
 
-    public function setEmail(string $email): static
+    public function setMedicament(?Medicament $medicament): static
     {
-        $this->email = $email;
-
-        return $this;
-    }
-
-    public function getNumTel(): ?int
-    {
-        return $this->numTel;
-    }
-
-    public function setNumTel(int $numTel): static
-    {
-        $this->numTel = $numTel;
+        $this->medicament = $medicament;
 
         return $this;
     }
 
     public function getBonDeCommande(): ?BonDeCommande
     {
-        return $this->BonDeCommande;
+        return $this->bonDeCommande;
     }
 
-    public function setBonDeCommande(?BonDeCommande $BonDeCommande): static
+    public function setBonDeCommande(?BonDeCommande $bonDeCommande): static
     {
-        $this->BonDeCommande = $BonDeCommande;
+        $this->bonDeCommande = $bonDeCommande;
+
+        return $this;
+    }
+
+    public function getUserId(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUserId(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }
